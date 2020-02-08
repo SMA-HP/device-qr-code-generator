@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>QRCode Generator</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta charset="utf-8">
+   <link rel="stylesheet" href="css/1.css">
+   <script src="scripts/qrcode.min.js"></script>
+   <script type="text/javascript">
+      /** Creates SMA device QR code */
+      function createQRCode(sernr,sernrhp,passwd,pic,rid,tagid) {
+         //WIFI:T:WPA;S:SMA1992000277;P:GD2SDJNFEDWTVTZE;H:false;PIC:003420000000277;RID:SH5V3C;SN:1992000277;TD:9322
+         var code = "WIFI:T:WPA;S:SMA"+sernr+";P:"+passwd+";H:false;PIC:"+pic+";RID:"+rid+";SN:"+sernr+";TD:"+tagid
+         var qrcodetag = document.getElementById("qrcode")
+         new QRCode(qrcodetag, code);
+         fadeIn(qrcodetag)
+      }
+
+      function removeOldQRCode() {
+         var qrcodetag = document.getElementById("qrcode")
+         while (qrcodetag.hasChildNodes()) {
+           qrcodetag.removeChild(qrcodetag.childNodes[0]);
+         }
+      }
+
+      function updateQR() {
+         removeOldQRCode()
+         sernrkp = document.getElementById("sernr").value;
+         sernrhp = document.getElementById("sernrhp").value;
+         if (sernrhp === "") {
+            document.getElementById("sernrhp").value = document.getElementById("sernr").value
+         }
+         wifipassword = document.getElementById("wifipassword").value;
+         pic   = document.getElementById("pic").value;
+         rid   = document.getElementById("rid").value;
+         tagid = document.getElementById("tagid").value;
+         //createQRCode(1992000277,1992000277,'GD2SDJNFEDWTVTZE','003420000000277','SH5V3C',9322)
+         newqr = createQRCode(sernrkp,sernrhp,wifipassword,pic,rid,tagid)
+      }
+
+      function init() {
+         inputs = document.getElementsByTagName('input');
+         for (index = 0; index < inputs.length; ++index) {
+            inputs[index].addEventListener ("change", function () { updateQR(); });
+         }
+      }
+
+      function fadeIn(el) {
+         el.style.opacity = 0;
+         var tick = function () {
+            el.style.opacity = +el.style.opacity + 0.01;
+            if (+el.style.opacity < 1) {
+               (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16)
+            }
+         };
+         tick();
+      }
+
+   </script>
+</head>
+   <body onload="init()">
+   <h1>The Great SMA QR Code Generator</h1>
+
+   <div id="container">
+      <!--<img src="images/tripower.jpg" id="inverter"/>-->
+      <div id="qrcode"></div>
+   </div>
+
+   <div class="formcontainer">
+   <form>
+      <label for="sn">
+         Serial Number KP:
+         <input type="number" name="Serial Number" id="sernr"/>
+      </label><br/>
+
+      <label for="snhp">
+         Serial Number HP:
+         <input type="number" name="Serial Number" id="sernrhp"/>
+      </label><br/>
+
+      <label for="passwd">
+         WiFi Password:
+         <input type="text" name="SSID password" id="wifipassword"/>
+      </label><br/>
+
+      <label for="pic">
+         PIC:
+         <input type="number" name="SSID password" id="pic"/>
+      </label><br/>
+
+      <label for="rid">
+         RID:
+         <input type="text" name="rid" id="rid"/>
+      </label><br/>
+
+      <label for="tagid">
+         Device TagID:
+         <input type="number" name="tagid" id="tagid"/>
+      </label><br/>
+   </form>
+   <button type="submit" onClick="updateQR()">Create QR Code</button>
+   </div>
+</body>
+</html>
